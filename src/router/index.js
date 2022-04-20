@@ -8,8 +8,7 @@ export default new Router({
     path: '/home',
     name: 'home',
     meta: {
-      keepAlive: false,
-      title: '首页'
+      keepAlive: false
     },
     component: () => import('@/pages/Home')
   }]
