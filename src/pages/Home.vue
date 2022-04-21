@@ -7,6 +7,7 @@
 
 <script>
 import { Uploader } from 'vant'
+import { getBeautifyPic } from '@/tencentcloud/service'
 
 export default {
   name: 'HomePage',
@@ -18,7 +19,11 @@ export default {
   },
   methods: {
     afterRead(file) {
-      console.log(file)
+      console.log(file.content)
+      getBeautifyPic(file.content).then(res => {
+        console.log(res)
+      })
+      // getSegmentPortraitPic(file.content)
     }
   }
 }
