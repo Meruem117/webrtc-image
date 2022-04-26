@@ -1,29 +1,47 @@
 <template>
   <div class="container">
-    <h5>Image</h5>
-    <van-uploader :after-read="afterRead" />
+    <div class="base-box" v-show="!show">
+      <van-button type="primary" @click="openCamera">打开相机</van-button>
+    </div>
+    <div class="video-box" v-show="show">
+      <video id="video" class="video" playsinline autoplay></video>
+      <img class="video-cover" src="@/assets/bg.png" />
+      <div class="btn-group">
+        <van-button type="primary" @click="show = false">取消</van-button>
+        <van-button type="primary" @click="takePhoto">拍照</van-button>
+        <van-button type="primary" @click="front = !front">翻转</van-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { Uploader } from 'vant'
-import { getBeautifyPic } from '@/tencentcloud/service'
+import { Button } from 'vant'
 
 export default {
   name: 'HomePage',
   components: {
-    [Uploader.name]: Uploader
+    [Button.name]: Button
   },
   data() {
-    return {}
+    return {
+      show: false,
+      front: false
+    }
   },
   methods: {
-    afterRead(file) {
-      console.log(file.content)
-      getBeautifyPic(file.content).then(res => {
-        console.log(res)
-      })
-      // getSegmentPortraitPic(file.content)
+    async openCamera() {
+      const constraints = {
+        audio: false,
+        video: { facingMode: this.front ? 'user' : 'environment' }
+      }
+      const stream = await navigator.mediaDevices.getUserMedia(constraints)
+      const video = document.getElementById('video')
+      video.srcObject = stream
+      this.show = true
+    },
+    takePhoto() {
+      this.show = false
     }
   }
 }
@@ -33,6 +51,41 @@ export default {
 .container {
   width: 100%;
   height: 100%;
-  padding: 20px;
+}
+
+.container .base-box {
+  width: 100%;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.container .video-box {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+.container .video-box .video {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 80%;
+  background-color: #000;
+}
+
+.container .video-box .video-cover {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 80%;
+}
+
+.container .video-box .btn-group {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: center;
 }
 </style>
