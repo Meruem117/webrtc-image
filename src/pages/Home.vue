@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div class="base-box" v-show="!show">
-      <van-button type="primary" @click="openCamera">打开相机</van-button>
+      <van-image width="240" height="240" :src="src" fit="scale-down" @click="imagePreview(src)" v-if="src" />
+      <van-button class="btn" type="primary" @click="openCamera">打开相机</van-button>
     </div>
     <div class="video-box" v-show="show">
       <video id="video" class="video" playsinline autoplay></video>
@@ -16,17 +17,20 @@
 </template>
 
 <script>
-import { Button } from 'vant'
+import { Button, Image, ImagePreview } from 'vant'
 
 export default {
   name: 'HomePage',
   components: {
-    [Button.name]: Button
+    [Button.name]: Button,
+    [Image.name]: Image,
+    [ImagePreview.name]: ImagePreview
   },
   data() {
     return {
       show: false,
-      front: false
+      front: false,
+      src: 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg'
     }
   },
   methods: {
@@ -42,6 +46,12 @@ export default {
     },
     takePhoto() {
       this.show = false
+    },
+    imagePreview(src) {
+      ImagePreview({
+        images: [src],
+        startPosition: 0
+      })
     }
   }
 }
@@ -56,7 +66,15 @@ export default {
 .container .base-box {
   width: 100%;
   padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+}
+
+.container .base-box .btn {
+  margin-top: 15px;
 }
 
 .container .video-box {
