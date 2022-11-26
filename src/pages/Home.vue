@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import html2canvas from 'html2canvas'
 import { Button, Image, ImagePreview } from 'vant'
 
 export default {
@@ -34,18 +35,52 @@ export default {
     }
   },
   methods: {
-    async openCamera() {
+    openCamera() {
+      let that = this
+      if (navigator.mediaDevices === undefined) {
+        navigator.mediaDevices = {}
+      }
+      if (navigator.mediaDevices.getUserMedia === undefined) {
+        navigator.mediaDevices.getUserMedia = function (constraints) {
+          var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+          if (!getUserMedia) {
+            return Promise.reject(new Error('getUserMedia is not implemented in this browser'))
+          }
+          return new Promise(function (resolve, reject) {
+            getUserMedia.call(navigator, constraints, resolve, reject)
+          })
+        }
+      }
       const constraints = {
         audio: false,
         video: { facingMode: this.front ? 'user' : 'environment' }
       }
-      const stream = await navigator.mediaDevices.getUserMedia(constraints)
-      const video = document.getElementById('video')
-      video.srcObject = stream
-      this.show = true
+      navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+        var video = document.querySelector('video')
+        window.stream = stream
+        if ("srcObject" in video) {
+          video.srcObject = stream
+        } else {
+          video.src = window.URL.createObjectURL(stream)
+        }
+        video.onloadedmetadata = function () {
+          video.play()
+        }
+        this.show = true
+      }).catch(() => {
+        this.show = false
+        that.$toast('该环境不支持调用此功能！')
+      })
     },
     takePhoto() {
-      this.show = false
+      html2canvas(document.getElementById("video"), {
+        backgroundColor: null,
+        useCORS: true
+      }).then(canvas => {
+        let url = canvas.toDataURL('image/jpg')
+        this.src = url
+        this.show = false
+      })
     },
     imagePreview(src) {
       ImagePreview({
