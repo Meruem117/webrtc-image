@@ -7,9 +7,9 @@
       <video id="video" class="video" playsinline autoplay></video>
       <img class="video-cover" src="@/assets/bg.png" />
       <div class="btn-group">
-        <van-button type="primary" @click="show = false">取消</van-button>
-        <van-button type="primary" @click="takePhoto">拍照</van-button>
-        <van-button type="primary" @click="front = !front">翻转</van-button>
+        <van-button class="btn" type="primary" @click="show = false">取消</van-button>
+        <van-button class="btn" type="primary" @click="takePhoto">拍照</van-button>
+        <van-button class="btn" type="primary" @click="front = !front">翻转</van-button>
       </div>
     </div>
   </div>
@@ -82,10 +82,15 @@ export default {
 
 .container .video-box .btn-group {
   position: absolute;
-  bottom: 0;
+  bottom: -20px;
   width: 100%;
   height: 20%;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+}
+
+
+.container .video-box .btn-group .btn {
+  width: 120px;
 }
 </style>
